@@ -4,11 +4,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Typing Speed Meter | Version 2.0</title>
+<title>RapidKeys | Typing Speed Meter</title>
 
 <style>
-/* ---------- BASIC SETTINGS ---------- */
-
+/* BASIC SETTINGS */
 * {
     margin: 0;
     padding: 0;
@@ -52,8 +51,6 @@ body {
     margin: auto;
 }
 
-/* ---------- HEADER ---------- */
-
 header {
     text-align: center;
     margin-bottom: 25px;
@@ -94,8 +91,7 @@ h2 {
     margin-top: 10px;
 }
 
-/* ---------- INPUTS AND BUTTONS ---------- */
-
+/* BUTTONS AND INPUTS */
 select, textarea, button {
     font-family: Arial, sans-serif;
     font-size: 15px;
@@ -137,8 +133,7 @@ button:disabled {
     border: 1px solid var(--border);
 }
 
-/* ---------- TEST SETTINGS ---------- */
-
+/* SETTINGS */
 .settings {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -165,8 +160,7 @@ button:disabled {
     font-size: 13px;
 }
 
-/* ---------- STATISTICS ---------- */
-
+/* STATISTICS */
 .stats {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -191,8 +185,55 @@ button:disabled {
     color: var(--muted);
 }
 
-/* ---------- TYPING AREA ---------- */
+/* RANK SYSTEM */
+.rank-card {
+    background: var(--secondary);
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 18px;
+    text-align: center;
+}
 
+.rank-name {
+    font-size: 27px;
+    font-weight: bold;
+    color: var(--accent);
+    margin: 8px 0;
+}
+
+.group-name {
+    font-size: 16px;
+    color: var(--green);
+    font-weight: bold;
+}
+
+.rank-status {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.rank-progress-bg {
+    height: 10px;
+    background: var(--bg);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+#rankProgress {
+    height: 100%;
+    width: 0%;
+    background: var(--green);
+    transition: width 0.3s;
+}
+
+.next-rank {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* TYPING AREA */
 #passage {
     background: var(--secondary);
     padding: 18px;
@@ -244,8 +285,7 @@ textarea:disabled {
     margin-top: 15px;
 }
 
-/* ---------- PROGRESS BAR ---------- */
-
+/* PROGRESS BAR */
 .progress-bg {
     height: 7px;
     background: var(--secondary);
@@ -261,8 +301,7 @@ textarea:disabled {
     transition: width 0.2s;
 }
 
-/* ---------- GRAPHS ---------- */
-
+/* GRAPHS */
 canvas {
     width: 100%;
     height: 240px;
@@ -275,8 +314,7 @@ canvas {
     margin-top: 10px;
 }
 
-/* ---------- RESULTS ---------- */
-
+/* RESULTS */
 #result {
     display: none;
     text-align: center;
@@ -294,8 +332,18 @@ canvas {
     color: var(--accent);
 }
 
-/* ---------- LEADERBOARD ---------- */
+#finalRank {
+    font-size: 26px;
+    font-weight: bold;
+    color: var(--accent);
+}
 
+#finalGroup {
+    color: var(--green);
+    font-weight: bold;
+}
+
+/* TABLES */
 .table-wrapper {
     overflow-x: auto;
 }
@@ -304,7 +352,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
-    min-width: 550px;
+    min-width: 750px;
 }
 
 th, td {
@@ -327,8 +375,11 @@ td {
     padding: 20px;
 }
 
-/* ---------- RESPONSIVE DESIGN ---------- */
+.rank-table {
+    min-width: 500px;
+}
 
+/* RESPONSIVE DESIGN */
 @media(max-width: 700px) {
     body {
         padding: 12px;
@@ -362,7 +413,6 @@ td {
 <div class="container">
 
 <!-- HEADER -->
-
 <div class="top-bar">
     <button class="theme-btn" onclick="toggleTheme()" id="themeButton">
         ☀ Light Mode
@@ -370,22 +420,17 @@ td {
 </div>
 
 <header>
-    <h1>⌨ Typing Speed Meter</h1>
+    <h1>⌨ RapidKeys</h1>
     <p>Improve your typing speed, accuracy and consistency!</p>
 </header>
 
-
-<!-- SETTINGS -->
-
+<!-- TEST SETTINGS -->
 <div class="card">
-
     <h2>Test Settings</h2>
 
     <div class="settings">
-
         <div class="setting">
             <label for="duration">Select Time Mode</label>
-
             <select id="duration" onchange="resetTest()">
                 <option value="30">30 Seconds</option>
                 <option value="60">1 Minute</option>
@@ -399,31 +444,23 @@ td {
 
         <div class="setting">
             <label for="difficulty">Select Difficulty</label>
-
             <select id="difficulty" onchange="resetTest()">
                 <option value="easy">Easy</option>
                 <option value="medium" selected>Medium</option>
                 <option value="hard">Hard</option>
             </select>
         </div>
-
     </div>
 
     <div id="timer">02:00</div>
-
     <p id="timer-status">Start typing to begin the timer</p>
-
 </div>
 
-
 <!-- LIVE STATISTICS -->
-
 <div class="card">
-
     <h2>Live Typing Statistics</h2>
 
     <div class="stats">
-
         <div class="stat">
             <h3 id="wpm">0</h3>
             <p>WPM</p>
@@ -448,16 +485,36 @@ td {
             <h3 id="bestWpm">0</h3>
             <p>Highest WPM</p>
         </div>
-
     </div>
 
+    <!-- LIVE RANK DISPLAY -->
+    <div class="rank-card">
+        <p>Your Current League</p>
+
+        <div class="rank-name" id="liveRank">
+            Not Ranked
+        </div>
+
+        <div class="group-name" id="liveGroup">
+            Start typing to earn a rank
+        </div>
+
+        <p class="rank-status" id="liveRankStatus">
+            Your rank will appear during the test.
+        </p>
+
+        <div class="rank-progress-bg">
+            <div id="rankProgress"></div>
+        </div>
+
+        <p class="next-rank" id="nextRank">
+            Complete a typing test to see your progress.
+        </p>
+    </div>
 </div>
 
-
 <!-- TYPING AREA -->
-
 <div class="card">
-
     <h2>Typing Test</h2>
 
     <div id="passage"></div>
@@ -483,44 +540,28 @@ td {
         <button onclick="resetTest()">↻ Restart Test</button>
         <button onclick="finishTest()">Finish Test</button>
     </div>
-
 </div>
 
-
 <!-- WPM GRAPH -->
-
 <div class="card">
-
     <h2>📈 Typing Speed Graph</h2>
-
     <canvas id="wpmGraph"></canvas>
-
     <p class="graph-description">
         Shows your typing speed in words per minute throughout the test.
     </p>
-
 </div>
 
-
 <!-- ACCURACY GRAPH -->
-
 <div class="card">
-
     <h2>🎯 Accuracy Graph</h2>
-
     <canvas id="accuracyGraph"></canvas>
-
     <p class="graph-description">
         Shows how your typing accuracy changes during the test.
     </p>
-
 </div>
 
-
 <!-- FINAL RESULT -->
-
 <div class="card" id="result">
-
     <h2>🏆 Test Completed!</h2>
 
     <p class="final-score">
@@ -532,15 +573,43 @@ td {
     <p>Total Characters: <strong id="finalCharacters">0</strong></p>
     <p>Difficulty: <strong id="finalDifficulty">Medium</strong></p>
 
-    <p id="performance"></p>
+    <hr style="margin:15px 0; border-color:var(--border)">
 
+    <p>Your Rank</p>
+    <div id="finalRank">Beginner</div>
+    <div id="finalGroup">Slow Starters</div>
+    <p id="rankQualification"></p>
+    <p id="nextRankResult"></p>
+
+    <p id="performance"></p>
 </div>
 
+<!-- RANK GUIDE -->
+<div class="card">
+    <h2>🥇 RapidKeys Rank & League Guide</h2>
+
+    <p class="small-text">
+        Your rank is calculated using your final WPM score.
+        At least 90% accuracy is required for an official rank.
+    </p>
+
+    <div class="table-wrapper">
+        <table class="rank-table">
+            <thead>
+                <tr>
+                    <th>WPM Range</th>
+                    <th>Rank</th>
+                    <th>Group Name</th>
+                </tr>
+            </thead>
+
+            <tbody id="rankGuide"></tbody>
+        </table>
+    </div>
+</div>
 
 <!-- LEADERBOARD -->
-
 <div class="card">
-
     <h2>🏆 Personal Leaderboard</h2>
 
     <p class="small-text">
@@ -548,40 +617,37 @@ td {
     </p>
 
     <div class="table-wrapper">
-
         <table>
             <thead>
                 <tr>
-                    <th>Rank</th>
+                    <th>Position</th>
                     <th>WPM</th>
                     <th>Accuracy</th>
-                    <th>Time Mode</th>
+                    <th>Rank</th>
+                    <th>Group</th>
+                    <th>Time</th>
                     <th>Difficulty</th>
                 </tr>
             </thead>
 
             <tbody id="leaderboard"></tbody>
         </table>
-
     </div>
-
 </div>
 
-
 <!-- TEST HISTORY -->
-
 <div class="card">
-
     <h2>📋 Previous Test History</h2>
 
     <div class="table-wrapper">
-
         <table>
             <thead>
                 <tr>
                     <th>Date</th>
                     <th>WPM</th>
                     <th>Accuracy</th>
+                    <th>Rank</th>
+                    <th>Group</th>
                     <th>Duration</th>
                     <th>Difficulty</th>
                 </tr>
@@ -589,7 +655,6 @@ td {
 
             <tbody id="history"></tbody>
         </table>
-
     </div>
 
     <div class="buttons">
@@ -597,11 +662,9 @@ td {
             Clear History
         </button>
     </div>
-
 </div>
 
 </div>
-
 
 <script>
 
@@ -620,7 +683,159 @@ const passages = {
 
 
 /* =================================
-   2. GLOBAL VARIABLES
+   2. RANK AND GROUP SYSTEM
+================================= */
+
+const ranks = [
+    {
+        min: 0,
+        max: 14,
+        name: "Beginner",
+        group: "Slow Starters"
+    },
+    {
+        min: 15,
+        max: 24,
+        name: "Learner",
+        group: "Key Learners"
+    },
+    {
+        min: 25,
+        max: 34,
+        name: "Rookie",
+        group: "Speed Sprinters"
+    },
+    {
+        min: 35,
+        max: 44,
+        name: "Intermediate",
+        group: "Rapid Typers"
+    },
+    {
+        min: 45,
+        max: 59,
+        name: "Advanced",
+        group: "Keyboard Warriors"
+    },
+    {
+        min: 60,
+        max: 79,
+        name: "Expert",
+        group: "Speed Legends"
+    },
+    {
+        min: 80,
+        max: 99,
+        name: "Master",
+        group: "Turbo Typers"
+    },
+    {
+        min: 100,
+        max: 119,
+        name: "Champion",
+        group: "Elite Strikers"
+    },
+    {
+        min: 120,
+        max: Infinity,
+        name: "Grandmaster",
+        group: "RapidKeys Legends"
+    }
+];
+
+
+/* Find the rank based on WPM */
+
+function getRankInfo(wpm) {
+
+    for (let i = 0; i < ranks.length; i++) {
+
+        if (wpm >= ranks[i].min && wpm <= ranks[i].max) {
+
+            return {
+                ...ranks[i],
+                index: i
+            };
+
+        }
+
+    }
+
+    return ranks[0];
+
+}
+
+
+/* Calculate progress towards next rank */
+
+function getRankProgress(wpm, rankInfo) {
+
+    if (rankInfo.index === ranks.length - 1) {
+
+        return {
+            percentage: 100,
+            message: "You have reached the highest RapidKeys rank!"
+        };
+
+    }
+
+    let nextRank = ranks[rankInfo.index + 1];
+
+    let percentage =
+        ((wpm - rankInfo.min) /
+        (nextRank.min - rankInfo.min)) * 100;
+
+    let needed = Math.max(0, nextRank.min - wpm);
+
+    return {
+        percentage: Math.max(0, Math.min(100, percentage)),
+        message: needed + " more WPM needed to reach " + nextRank.name + "."
+    };
+
+}
+
+
+/* Display all rank levels */
+
+function showRankGuide() {
+
+    let table = document.getElementById("rankGuide");
+
+    table.innerHTML = "";
+
+    ranks.forEach(rank => {
+
+        let row = document.createElement("tr");
+
+        let range = rank.max === Infinity
+            ? "120+"
+            : rank.min + "–" + rank.max;
+
+        let values = [
+            range,
+            rank.name,
+            rank.group
+        ];
+
+        values.forEach(value => {
+
+            let cell = document.createElement("td");
+
+            cell.textContent = value;
+
+            row.appendChild(cell);
+
+        });
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* =================================
+   3. GLOBAL VARIABLES
 ================================= */
 
 let duration = 120;
@@ -641,20 +856,25 @@ const difficultySelect = document.getElementById("difficulty");
 
 
 /* =================================
-   3. LOCAL STORAGE FUNCTIONS
+   4. LOCAL STORAGE FUNCTIONS
 ================================= */
 
 function getSavedHistory() {
 
     try {
+
         return JSON.parse(
             localStorage.getItem("typingHistory")
         ) || [];
+
     } catch (error) {
+
         return [];
+
     }
 
 }
+
 
 function saveHistory(history) {
 
@@ -667,7 +887,7 @@ function saveHistory(history) {
 
 
 /* =================================
-   4. CREATE TYPING TEXT
+   5. CREATE TYPING TEXT
 ================================= */
 
 function createTarget() {
@@ -676,7 +896,6 @@ function createTarget() {
 
     let text = passages[difficulty];
 
-    // Repeat passage for longer tests
     targetText = (text + " ").repeat(500);
 
     typing.maxLength = targetText.length;
@@ -685,7 +904,7 @@ function createTarget() {
 
 
 /* =================================
-   5. DISPLAY TYPING PASSAGE
+   6. DISPLAY TYPING PASSAGE
 ================================= */
 
 function showPassage() {
@@ -694,7 +913,6 @@ function showPassage() {
 
     passage.innerHTML = "";
 
-    // Show a small window around current position
     let start = Math.max(0, input.length - 25);
 
     let end = Math.min(
@@ -730,7 +948,66 @@ function showPassage() {
 
 
 /* =================================
-   6. CALCULATE STATISTICS
+   7. LIVE RANK DISPLAY
+================================= */
+
+function updateLiveRank(wpm, accuracy) {
+
+    let rankInfo = getRankInfo(wpm);
+
+    let progressInfo = getRankProgress(wpm, rankInfo);
+
+    let hasStarted = typing.value.length > 0;
+
+    if (!hasStarted) {
+
+        document.getElementById("liveRank").textContent =
+            "Not Ranked";
+
+        document.getElementById("liveGroup").textContent =
+            "Start typing to earn a rank";
+
+        document.getElementById("liveRankStatus").textContent =
+            "Your rank will appear during the test.";
+
+        document.getElementById("rankProgress").style.width = "0%";
+
+        document.getElementById("nextRank").textContent =
+            "Complete a typing test to see your progress.";
+
+        return;
+
+    }
+
+    document.getElementById("liveRank").textContent =
+        rankInfo.name;
+
+    document.getElementById("liveGroup").textContent =
+        rankInfo.group;
+
+    if (accuracy >= 90) {
+
+        document.getElementById("liveRankStatus").textContent =
+            "90% or higher accuracy: eligible for an official rank.";
+
+    } else {
+
+        document.getElementById("liveRankStatus").textContent =
+            "Provisional rank: reach 90% accuracy for an official rank.";
+
+    }
+
+    document.getElementById("rankProgress").style.width =
+        progressInfo.percentage + "%";
+
+    document.getElementById("nextRank").textContent =
+        progressInfo.message;
+
+}
+
+
+/* =================================
+   8. CALCULATE STATISTICS
 ================================= */
 
 function calculateStats() {
@@ -756,13 +1033,9 @@ function calculateStats() {
 
     let minutes = elapsed / 60;
 
-    let wpm = Math.round(
-        (correct / 5) / minutes
-    );
-
-    if (!startTime) {
-        wpm = 0;
-    }
+    let wpm = minutes > 0
+        ? Math.round((correct / 5) / minutes)
+        : 0;
 
     let accuracy = input.length > 0
         ? Math.round((correct / input.length) * 100)
@@ -789,6 +1062,8 @@ function calculateStats() {
     document.getElementById("progress").style.width =
         progress + "%";
 
+    updateLiveRank(wpm, accuracy);
+
     return {
         wpm,
         accuracy,
@@ -800,7 +1075,7 @@ function calculateStats() {
 
 
 /* =================================
-   7. TIMER FUNCTIONS
+   9. TIMER FUNCTIONS
 ================================= */
 
 function formatTime(seconds) {
@@ -837,7 +1112,6 @@ function updateTimer() {
 
     let stats = calculateStats();
 
-    // Record graph data every five seconds
     if (elapsed >= lastGraphTime + 5) {
 
         graphData.push({
@@ -860,14 +1134,13 @@ function updateTimer() {
 
 
 /* =================================
-   8. START TYPING TEST
+   10. START TYPING TEST
 ================================= */
 
 typing.addEventListener("input", function() {
 
     if (testFinished) return;
 
-    // Start timer on first typed character
     if (!startTime && typing.value.length > 0) {
 
         startTime = Date.now();
@@ -898,7 +1171,7 @@ typing.addEventListener("input", function() {
 
 
 /* =================================
-   9. DRAW GRAPH FUNCTION
+   11. DRAW GRAPH FUNCTION
 ================================= */
 
 function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
@@ -933,11 +1206,10 @@ function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
         ? Math.max(40, ...graphData.map(p => p.wpm))
         : maxValue;
 
-    highest = dataKey === "wpm"
-        ? Math.ceil(highest / 20) * 20
-        : maxValue;
+    if (dataKey === "wpm") {
+        highest = Math.ceil(highest / 20) * 20;
+    }
 
-    // Draw horizontal grid lines
     ctx.strokeStyle = getComputedStyle(document.body)
         .getPropertyValue("--border").trim();
 
@@ -960,15 +1232,10 @@ function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
         ctx.lineTo(width - right, y);
         ctx.stroke();
 
-        ctx.fillText(
-            value + suffix,
-            4,
-            y + 4
-        );
+        ctx.fillText(value + suffix, 4, y + 4);
 
     }
 
-    // Draw graph line
     if (graphData.length > 0) {
 
         ctx.beginPath();
@@ -976,7 +1243,7 @@ function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
         graphData.forEach((point, index) => {
 
             let x = left +
-                (point.time / duration) * graphWidth;
+                (Math.min(point.time, duration) / duration) * graphWidth;
 
             let y = top + graphHeight -
                 (point[dataKey] / highest) * graphHeight;
@@ -993,17 +1260,15 @@ function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // Draw points
         graphData.forEach(point => {
 
             let x = left +
-                (point.time / duration) * graphWidth;
+                (Math.min(point.time, duration) / duration) * graphWidth;
 
             let y = top + graphHeight -
                 (point[dataKey] / highest) * graphHeight;
 
             ctx.beginPath();
-
             ctx.arc(x, y, 4, 0, Math.PI * 2);
 
             ctx.fillStyle = color;
@@ -1013,7 +1278,6 @@ function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
 
     }
 
-    // Draw time axis
     ctx.fillStyle = getComputedStyle(document.body)
         .getPropertyValue("--muted").trim();
 
@@ -1029,11 +1293,7 @@ function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
             ? time + "s"
             : Math.floor(time / 60) + "m";
 
-        ctx.fillText(
-            label,
-            x,
-            height - 8
-        );
+        ctx.fillText(label, x, height - 8);
 
     }
 
@@ -1043,7 +1303,7 @@ function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
 
 
 /* =================================
-   10. UPDATE BOTH GRAPHS
+   12. UPDATE BOTH GRAPHS
 ================================= */
 
 function drawGraphs() {
@@ -1068,7 +1328,7 @@ function drawGraphs() {
 
 
 /* =================================
-   11. SAVE AND DISPLAY BEST SCORE
+   13. UPDATE BEST SCORE
 ================================= */
 
 function updateBestScore() {
@@ -1091,7 +1351,7 @@ function updateBestScore() {
 
 
 /* =================================
-   12. FINISH TEST
+   14. FINISH TEST
 ================================= */
 
 function finishTest() {
@@ -1116,7 +1376,8 @@ function finishTest() {
         (Date.now() - startTime) / 1000
     );
 
-    // Record final graph point
+    elapsed = Math.min(elapsed, duration);
+
     if (
         graphData.length === 0 ||
         graphData[graphData.length - 1].time !== elapsed
@@ -1140,7 +1401,6 @@ function finishTest() {
     document.getElementById("timer-status").textContent =
         "Test completed";
 
-    // Display final results
     document.getElementById("finalWpm").textContent =
         stats.wpm;
 
@@ -1157,6 +1417,34 @@ function finishTest() {
 
     document.getElementById("finalDifficulty").textContent =
         difficulty.toUpperCase();
+
+    // Calculate final rank
+    let rankInfo = getRankInfo(stats.wpm);
+
+    let progressInfo = getRankProgress(stats.wpm, rankInfo);
+
+    let official = stats.accuracy >= 90;
+
+    document.getElementById("finalRank").textContent =
+        rankInfo.name;
+
+    document.getElementById("finalGroup").textContent =
+        rankInfo.group;
+
+    if (official) {
+
+        document.getElementById("rankQualification").textContent =
+            "✅ Official Rank Achieved!";
+
+    } else {
+
+        document.getElementById("rankQualification").textContent =
+            "⚠ Provisional Rank – You need at least 90% accuracy.";
+
+    }
+
+    document.getElementById("nextRankResult").textContent =
+        progressInfo.message;
 
     let message = stats.wpm >= 60
         ? "Excellent typing speed! Keep it up!"
@@ -1180,12 +1468,14 @@ function finishTest() {
         errors: stats.errors,
         characters: typing.value.length,
         duration: duration,
-        difficulty: difficulty
+        difficulty: difficulty,
+        rank: rankInfo.name,
+        group: rankInfo.group,
+        official: official
     };
 
     history.unshift(newResult);
 
-    // Keep last ten tests
     history = history.slice(0, 10);
 
     saveHistory(history);
@@ -1196,7 +1486,6 @@ function finishTest() {
 
     showHistory();
 
-    // Bring result into view
     document.getElementById("result").scrollIntoView({
         behavior: "smooth",
         block: "center"
@@ -1206,7 +1495,7 @@ function finishTest() {
 
 
 /* =================================
-   13. LEADERBOARD
+   15. LEADERBOARD
 ================================= */
 
 function showLeaderboard() {
@@ -1220,13 +1509,12 @@ function showLeaderboard() {
     if (history.length === 0) {
 
         leaderboard.innerHTML =
-            '<tr><td colspan="5" class="empty-message">No tests completed yet.</td></tr>';
+            '<tr><td colspan="7" class="empty-message">No tests completed yet.</td></tr>';
 
         return;
 
     }
 
-    // Sort by highest WPM
     let sorted = [...history].sort(
         (a, b) => b.wpm - a.wpm
     );
@@ -1235,10 +1523,19 @@ function showLeaderboard() {
 
         let row = document.createElement("tr");
 
+        let rankInfo = getRankInfo(test.wpm);
+
+        let rankText = test.official === false ||
+            (test.official === undefined && test.accuracy < 90)
+            ? rankInfo.name + " (Provisional)"
+            : rankInfo.name;
+
         let values = [
             index + 1,
             test.wpm,
             test.accuracy + "%",
+            rankText,
+            rankInfo.group,
             formatTime(test.duration),
             test.difficulty.toUpperCase()
         ];
@@ -1261,7 +1558,7 @@ function showLeaderboard() {
 
 
 /* =================================
-   14. PREVIOUS TEST HISTORY
+   16. PREVIOUS TEST HISTORY
 ================================= */
 
 function showHistory() {
@@ -1275,7 +1572,7 @@ function showHistory() {
     if (history.length === 0) {
 
         historyTable.innerHTML =
-            '<tr><td colspan="5" class="empty-message">No previous tests available.</td></tr>';
+            '<tr><td colspan="7" class="empty-message">No previous tests available.</td></tr>';
 
         return;
 
@@ -1285,10 +1582,19 @@ function showHistory() {
 
         let row = document.createElement("tr");
 
+        let rankInfo = getRankInfo(test.wpm);
+
+        let rankText = test.official === false ||
+            (test.official === undefined && test.accuracy < 90)
+            ? rankInfo.name + " (Provisional)"
+            : rankInfo.name;
+
         let values = [
             test.date,
             test.wpm,
             test.accuracy + "%",
+            rankText,
+            rankInfo.group,
             formatTime(test.duration),
             test.difficulty.toUpperCase()
         ];
@@ -1311,7 +1617,7 @@ function showHistory() {
 
 
 /* =================================
-   15. CLEAR HISTORY
+   17. CLEAR HISTORY
 ================================= */
 
 function clearHistory() {
@@ -1336,7 +1642,7 @@ function clearHistory() {
 
 
 /* =================================
-   16. DARK AND LIGHT MODE
+   18. DARK AND LIGHT MODE
 ================================= */
 
 function toggleTheme() {
@@ -1372,9 +1678,7 @@ function loadTheme() {
     let savedTheme = localStorage.getItem("typingTheme");
 
     if (savedTheme === "light") {
-
         document.body.classList.add("light");
-
     }
 
     updateThemeButton();
@@ -1383,7 +1687,7 @@ function loadTheme() {
 
 
 /* =================================
-   17. RESET TEST
+   19. RESET TEST
 ================================= */
 
 function resetTest() {
@@ -1428,13 +1732,15 @@ function resetTest() {
 
     showPassage();
 
+    calculateStats();
+
     drawGraphs();
 
 }
 
 
 /* =================================
-   18. INITIAL SETUP
+   20. INITIAL SETUP
 ================================= */
 
 window.addEventListener("resize", drawGraphs);
@@ -1446,6 +1752,8 @@ updateBestScore();
 showLeaderboard();
 
 showHistory();
+
+showRankGuide();
 
 resetTest();
 
