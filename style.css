@@ -1,0 +1,400 @@
+<style>
+/* BASIC SETTINGS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #101827;
+    --card: #1e293b;
+    --secondary: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --border: #475569;
+    --green: #4ade80;
+    --red: #f87171;
+}
+
+body.light {
+    --bg: #eef2f7;
+    --card: #ffffff;
+    --secondary: #e2e8f0;
+    --text: #172033;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --border: #cbd5e1;
+    --green: #15803d;
+    --red: #dc2626;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 25px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    color: var(--accent);
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: var(--muted);
+}
+
+.top-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.card {
+    background: var(--card);
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+
+h2 {
+    font-size: 19px;
+    margin-bottom: 18px;
+}
+
+.small-text {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+/* BUTTONS AND INPUTS */
+select, textarea, button {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    border-radius: 7px;
+}
+
+select {
+    padding: 11px;
+    background: var(--secondary);
+    color: var(--text);
+    border: 1px solid var(--border);
+    margin-top: 8px;
+    width: 100%;
+}
+
+button {
+    padding: 11px 18px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.theme-btn {
+    background: var(--secondary);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+/* SETTINGS */
+.settings {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.setting label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#timer {
+    text-align: center;
+    font-size: 38px;
+    font-weight: bold;
+    color: var(--accent);
+    margin: 22px 0 10px;
+}
+
+#timer-status {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* STATISTICS */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.stat {
+    background: var(--secondary);
+    padding: 17px 8px;
+    text-align: center;
+    border-radius: 9px;
+}
+
+.stat h3 {
+    font-size: 25px;
+    color: var(--accent);
+    margin-bottom: 7px;
+}
+
+.stat p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* RANK SYSTEM */
+.rank-card {
+    background: var(--secondary);
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 18px;
+    text-align: center;
+}
+
+.rank-name {
+    font-size: 27px;
+    font-weight: bold;
+    color: var(--accent);
+    margin: 8px 0;
+}
+
+.group-name {
+    font-size: 16px;
+    color: var(--green);
+    font-weight: bold;
+}
+
+.rank-status {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.rank-progress-bg {
+    height: 10px;
+    background: var(--bg);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+#rankProgress {
+    height: 100%;
+    width: 0%;
+    background: var(--green);
+    transition: width 0.3s;
+}
+
+.next-rank {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* TYPING AREA */
+#passage {
+    background: var(--secondary);
+    padding: 18px;
+    border-radius: 8px;
+    line-height: 1.9;
+    min-height: 120px;
+    margin-bottom: 15px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.correct {
+    color: var(--green);
+}
+
+.wrong {
+    color: var(--red);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.current {
+    border-bottom: 2px solid var(--accent);
+}
+
+textarea {
+    width: 100%;
+    height: 120px;
+    padding: 15px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: var(--accent);
+}
+
+textarea:disabled {
+    opacity: 0.6;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+/* PROGRESS BAR */
+.progress-bg {
+    height: 7px;
+    background: var(--secondary);
+    border-radius: 10px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+#progress {
+    width: 0%;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.2s;
+}
+
+/* GRAPHS */
+canvas {
+    width: 100%;
+    height: 240px;
+    display: block;
+}
+
+.graph-description {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+/* RESULTS */
+#result {
+    display: none;
+    text-align: center;
+    line-height: 2;
+    border: 1px solid var(--accent);
+}
+
+#result h2 {
+    color: var(--green);
+}
+
+.final-score {
+    font-size: 35px;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+#finalRank {
+    font-size: 26px;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+#finalGroup {
+    color: var(--green);
+    font-weight: bold;
+}
+
+/* TABLES */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    min-width: 750px;
+}
+
+th, td {
+    padding: 13px 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    color: var(--accent);
+    background: var(--secondary);
+}
+
+td {
+    color: var(--text);
+}
+
+.empty-message {
+    color: var(--muted);
+    text-align: center;
+    padding: 20px;
+}
+
+.rank-table {
+    min-width: 500px;
+}
+
+/* RESPONSIVE DESIGN */
+@media(max-width: 700px) {
+    body {
+        padding: 12px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    #timer {
+        font-size: 32px;
+    }
+}
+</style>
