@@ -1,0 +1,1455 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typing Speed Meter | Version 2.0</title>
+
+<style>
+/* ---------- BASIC SETTINGS ---------- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #101827;
+    --card: #1e293b;
+    --secondary: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --border: #475569;
+    --green: #4ade80;
+    --red: #f87171;
+}
+
+body.light {
+    --bg: #eef2f7;
+    --card: #ffffff;
+    --secondary: #e2e8f0;
+    --text: #172033;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --border: #cbd5e1;
+    --green: #15803d;
+    --red: #dc2626;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 25px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+/* ---------- HEADER ---------- */
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    color: var(--accent);
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: var(--muted);
+}
+
+.top-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.card {
+    background: var(--card);
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+
+h2 {
+    font-size: 19px;
+    margin-bottom: 18px;
+}
+
+.small-text {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+/* ---------- INPUTS AND BUTTONS ---------- */
+
+select, textarea, button {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    border-radius: 7px;
+}
+
+select {
+    padding: 11px;
+    background: var(--secondary);
+    color: var(--text);
+    border: 1px solid var(--border);
+    margin-top: 8px;
+    width: 100%;
+}
+
+button {
+    padding: 11px 18px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.theme-btn {
+    background: var(--secondary);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+/* ---------- TEST SETTINGS ---------- */
+
+.settings {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.setting label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#timer {
+    text-align: center;
+    font-size: 38px;
+    font-weight: bold;
+    color: var(--accent);
+    margin: 22px 0 10px;
+}
+
+#timer-status {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* ---------- STATISTICS ---------- */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.stat {
+    background: var(--secondary);
+    padding: 17px 8px;
+    text-align: center;
+    border-radius: 9px;
+}
+
+.stat h3 {
+    font-size: 25px;
+    color: var(--accent);
+    margin-bottom: 7px;
+}
+
+.stat p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* ---------- TYPING AREA ---------- */
+
+#passage {
+    background: var(--secondary);
+    padding: 18px;
+    border-radius: 8px;
+    line-height: 1.9;
+    min-height: 120px;
+    margin-bottom: 15px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.correct {
+    color: var(--green);
+}
+
+.wrong {
+    color: var(--red);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.current {
+    border-bottom: 2px solid var(--accent);
+}
+
+textarea {
+    width: 100%;
+    height: 120px;
+    padding: 15px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: var(--accent);
+}
+
+textarea:disabled {
+    opacity: 0.6;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+/* ---------- PROGRESS BAR ---------- */
+
+.progress-bg {
+    height: 7px;
+    background: var(--secondary);
+    border-radius: 10px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+#progress {
+    width: 0%;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.2s;
+}
+
+/* ---------- GRAPHS ---------- */
+
+canvas {
+    width: 100%;
+    height: 240px;
+    display: block;
+}
+
+.graph-description {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+}
+
+/* ---------- RESULTS ---------- */
+
+#result {
+    display: none;
+    text-align: center;
+    line-height: 2;
+    border: 1px solid var(--accent);
+}
+
+#result h2 {
+    color: var(--green);
+}
+
+.final-score {
+    font-size: 35px;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+/* ---------- LEADERBOARD ---------- */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    min-width: 550px;
+}
+
+th, td {
+    padding: 13px 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    color: var(--accent);
+    background: var(--secondary);
+}
+
+td {
+    color: var(--text);
+}
+
+.empty-message {
+    color: var(--muted);
+    text-align: center;
+    padding: 20px;
+}
+
+/* ---------- RESPONSIVE DESIGN ---------- */
+
+@media(max-width: 700px) {
+    body {
+        padding: 12px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    #timer {
+        font-size: 32px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+
+<div class="top-bar">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeButton">
+        ☀ Light Mode
+    </button>
+</div>
+
+<header>
+    <h1>⌨ Typing Speed Meter</h1>
+    <p>Improve your typing speed, accuracy and consistency!</p>
+</header>
+
+
+<!-- SETTINGS -->
+
+<div class="card">
+
+    <h2>Test Settings</h2>
+
+    <div class="settings">
+
+        <div class="setting">
+            <label for="duration">Select Time Mode</label>
+
+            <select id="duration" onchange="resetTest()">
+                <option value="30">30 Seconds</option>
+                <option value="60">1 Minute</option>
+                <option value="120" selected>120 Seconds</option>
+                <option value="180">3 Minutes</option>
+                <option value="300">5 Minutes</option>
+                <option value="600">10 Minutes</option>
+                <option value="1800">30 Minutes</option>
+            </select>
+        </div>
+
+        <div class="setting">
+            <label for="difficulty">Select Difficulty</label>
+
+            <select id="difficulty" onchange="resetTest()">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div id="timer">02:00</div>
+
+    <p id="timer-status">Start typing to begin the timer</p>
+
+</div>
+
+
+<!-- LIVE STATISTICS -->
+
+<div class="card">
+
+    <h2>Live Typing Statistics</h2>
+
+    <div class="stats">
+
+        <div class="stat">
+            <h3 id="wpm">0</h3>
+            <p>WPM</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="accuracy">100%</h3>
+            <p>Accuracy</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="errors">0</h3>
+            <p>Errors</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="characters">0</h3>
+            <p>Characters</p>
+        </div>
+
+        <div class="stat">
+            <h3 id="bestWpm">0</h3>
+            <p>Highest WPM</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TYPING AREA -->
+
+<div class="card">
+
+    <h2>Typing Test</h2>
+
+    <div id="passage"></div>
+
+    <textarea
+        id="typing"
+        placeholder="Click here and start typing..."
+        spellcheck="false"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off">
+    </textarea>
+
+    <div class="progress-bg">
+        <div id="progress"></div>
+    </div>
+
+    <p class="small-text" id="characterInfo">
+        0 characters typed
+    </p>
+
+    <div class="buttons">
+        <button onclick="resetTest()">↻ Restart Test</button>
+        <button onclick="finishTest()">Finish Test</button>
+    </div>
+
+</div>
+
+
+<!-- WPM GRAPH -->
+
+<div class="card">
+
+    <h2>📈 Typing Speed Graph</h2>
+
+    <canvas id="wpmGraph"></canvas>
+
+    <p class="graph-description">
+        Shows your typing speed in words per minute throughout the test.
+    </p>
+
+</div>
+
+
+<!-- ACCURACY GRAPH -->
+
+<div class="card">
+
+    <h2>🎯 Accuracy Graph</h2>
+
+    <canvas id="accuracyGraph"></canvas>
+
+    <p class="graph-description">
+        Shows how your typing accuracy changes during the test.
+    </p>
+
+</div>
+
+
+<!-- FINAL RESULT -->
+
+<div class="card" id="result">
+
+    <h2>🏆 Test Completed!</h2>
+
+    <p class="final-score">
+        <span id="finalWpm">0</span> WPM
+    </p>
+
+    <p>Accuracy: <strong id="finalAccuracy">0%</strong></p>
+    <p>Total Errors: <strong id="finalErrors">0</strong></p>
+    <p>Total Characters: <strong id="finalCharacters">0</strong></p>
+    <p>Difficulty: <strong id="finalDifficulty">Medium</strong></p>
+
+    <p id="performance"></p>
+
+</div>
+
+
+<!-- LEADERBOARD -->
+
+<div class="card">
+
+    <h2>🏆 Personal Leaderboard</h2>
+
+    <p class="small-text">
+        Your top five typing test performances on this browser.
+    </p>
+
+    <div class="table-wrapper">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>WPM</th>
+                    <th>Accuracy</th>
+                    <th>Time Mode</th>
+                    <th>Difficulty</th>
+                </tr>
+            </thead>
+
+            <tbody id="leaderboard"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- TEST HISTORY -->
+
+<div class="card">
+
+    <h2>📋 Previous Test History</h2>
+
+    <div class="table-wrapper">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>WPM</th>
+                    <th>Accuracy</th>
+                    <th>Duration</th>
+                    <th>Difficulty</th>
+                </tr>
+            </thead>
+
+            <tbody id="history"></tbody>
+        </table>
+
+    </div>
+
+    <div class="buttons">
+        <button onclick="clearHistory()" style="background:#dc2626">
+            Clear History
+        </button>
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =================================
+   1. SAMPLE TYPING PASSAGES
+================================= */
+
+const passages = {
+
+    easy: `The sun is shining today. I like to read books and learn new things. Practice makes a person better. Typing every day can improve your speed. Keep your fingers relaxed and enjoy learning new skills.`,
+
+    medium: `Technology plays an important role in our daily lives. Students use computers to complete assignments, research information and communicate with others. Regular practice helps improve typing speed and accuracy.`,
+
+    hard: `Programming requires patience, logical thinking and problem-solving skills. JavaScript, HTML and CSS are essential technologies for developing interactive websites. Consistent practice improves productivity, precision and confidence.`
+};
+
+
+/* =================================
+   2. GLOBAL VARIABLES
+================================= */
+
+let duration = 120;
+let startTime = null;
+let timerInterval = null;
+
+let graphData = [];
+let lastGraphTime = 0;
+
+let testFinished = false;
+let targetText = "";
+
+const typing = document.getElementById("typing");
+const passage = document.getElementById("passage");
+
+const durationSelect = document.getElementById("duration");
+const difficultySelect = document.getElementById("difficulty");
+
+
+/* =================================
+   3. LOCAL STORAGE FUNCTIONS
+================================= */
+
+function getSavedHistory() {
+
+    try {
+        return JSON.parse(
+            localStorage.getItem("typingHistory")
+        ) || [];
+    } catch (error) {
+        return [];
+    }
+
+}
+
+function saveHistory(history) {
+
+    localStorage.setItem(
+        "typingHistory",
+        JSON.stringify(history)
+    );
+
+}
+
+
+/* =================================
+   4. CREATE TYPING TEXT
+================================= */
+
+function createTarget() {
+
+    let difficulty = difficultySelect.value;
+
+    let text = passages[difficulty];
+
+    // Repeat passage for longer tests
+    targetText = (text + " ").repeat(500);
+
+    typing.maxLength = targetText.length;
+
+}
+
+
+/* =================================
+   5. DISPLAY TYPING PASSAGE
+================================= */
+
+function showPassage() {
+
+    let input = typing.value;
+
+    passage.innerHTML = "";
+
+    // Show a small window around current position
+    let start = Math.max(0, input.length - 25);
+
+    let end = Math.min(
+        targetText.length,
+        start + 220
+    );
+
+    for (let i = start; i < end; i++) {
+
+        let span = document.createElement("span");
+
+        span.textContent = targetText[i];
+
+        if (i < input.length) {
+
+            if (input[i] === targetText[i]) {
+                span.className = "correct";
+            } else {
+                span.className = "wrong";
+            }
+
+        } else if (i === input.length) {
+
+            span.className = "current";
+
+        }
+
+        passage.appendChild(span);
+
+    }
+
+}
+
+
+/* =================================
+   6. CALCULATE STATISTICS
+================================= */
+
+function calculateStats() {
+
+    let input = typing.value;
+
+    let correct = 0;
+    let errors = 0;
+
+    for (let i = 0; i < input.length; i++) {
+
+        if (input[i] === targetText[i]) {
+            correct++;
+        } else {
+            errors++;
+        }
+
+    }
+
+    let elapsed = startTime
+        ? Math.max(1, (Date.now() - startTime) / 1000)
+        : 0;
+
+    let minutes = elapsed / 60;
+
+    let wpm = Math.round(
+        (correct / 5) / minutes
+    );
+
+    if (!startTime) {
+        wpm = 0;
+    }
+
+    let accuracy = input.length > 0
+        ? Math.round((correct / input.length) * 100)
+        : 100;
+
+    document.getElementById("wpm").textContent = wpm;
+
+    document.getElementById("accuracy").textContent =
+        accuracy + "%";
+
+    document.getElementById("errors").textContent = errors;
+
+    document.getElementById("characters").textContent =
+        input.length;
+
+    document.getElementById("characterInfo").textContent =
+        input.length + " characters typed";
+
+    let progress = Math.min(
+        100,
+        (input.length / targetText.length) * 100
+    );
+
+    document.getElementById("progress").style.width =
+        progress + "%";
+
+    return {
+        wpm,
+        accuracy,
+        errors,
+        correct
+    };
+
+}
+
+
+/* =================================
+   7. TIMER FUNCTIONS
+================================= */
+
+function formatTime(seconds) {
+
+    let minutes = Math.floor(seconds / 60);
+
+    let remaining = seconds % 60;
+
+    return String(minutes).padStart(2, "0") +
+        ":" +
+        String(remaining).padStart(2, "0");
+
+}
+
+
+function updateTimer() {
+
+    if (!startTime || testFinished) return;
+
+    let elapsed = Math.floor(
+        (Date.now() - startTime) / 1000
+    );
+
+    let remaining = Math.max(
+        0,
+        duration - elapsed
+    );
+
+    document.getElementById("timer").textContent =
+        formatTime(remaining);
+
+    document.getElementById("timer-status").textContent =
+        "Test in progress...";
+
+    let stats = calculateStats();
+
+    // Record graph data every five seconds
+    if (elapsed >= lastGraphTime + 5) {
+
+        graphData.push({
+            time: elapsed,
+            wpm: stats.wpm,
+            accuracy: stats.accuracy
+        });
+
+        lastGraphTime = elapsed;
+
+        drawGraphs();
+
+    }
+
+    if (remaining <= 0) {
+        finishTest();
+    }
+
+}
+
+
+/* =================================
+   8. START TYPING TEST
+================================= */
+
+typing.addEventListener("input", function() {
+
+    if (testFinished) return;
+
+    // Start timer on first typed character
+    if (!startTime && typing.value.length > 0) {
+
+        startTime = Date.now();
+
+        graphData = [{
+            time: 0,
+            wpm: 0,
+            accuracy: 100
+        }];
+
+        lastGraphTime = 0;
+
+        timerInterval = setInterval(
+            updateTimer,
+            1000
+        );
+
+        document.getElementById("timer-status").textContent =
+            "Test in progress...";
+
+    }
+
+    showPassage();
+
+    calculateStats();
+
+});
+
+
+/* =================================
+   9. DRAW GRAPH FUNCTION
+================================= */
+
+function drawGraph(canvasId, dataKey, color, maxValue, suffix) {
+
+    const canvas = document.getElementById(canvasId);
+
+    const ctx = canvas.getContext("2d");
+
+    const rect = canvas.getBoundingClientRect();
+
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const width = rect.width;
+    const height = rect.height;
+
+    const left = 42;
+    const right = 15;
+    const top = 15;
+    const bottom = 30;
+
+    const graphWidth = width - left - right;
+    const graphHeight = height - top - bottom;
+
+    ctx.clearRect(0, 0, width, height);
+
+    let highest = dataKey === "wpm"
+        ? Math.max(40, ...graphData.map(p => p.wpm))
+        : maxValue;
+
+    highest = dataKey === "wpm"
+        ? Math.ceil(highest / 20) * 20
+        : maxValue;
+
+    // Draw horizontal grid lines
+    ctx.strokeStyle = getComputedStyle(document.body)
+        .getPropertyValue("--border").trim();
+
+    ctx.fillStyle = getComputedStyle(document.body)
+        .getPropertyValue("--muted").trim();
+
+    ctx.font = "11px Arial";
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= 4; i++) {
+
+        let y = top + graphHeight * i / 4;
+
+        let value = Math.round(
+            highest * (4 - i) / 4
+        );
+
+        ctx.beginPath();
+        ctx.moveTo(left, y);
+        ctx.lineTo(width - right, y);
+        ctx.stroke();
+
+        ctx.fillText(
+            value + suffix,
+            4,
+            y + 4
+        );
+
+    }
+
+    // Draw graph line
+    if (graphData.length > 0) {
+
+        ctx.beginPath();
+
+        graphData.forEach((point, index) => {
+
+            let x = left +
+                (point.time / duration) * graphWidth;
+
+            let y = top + graphHeight -
+                (point[dataKey] / highest) * graphHeight;
+
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+
+        });
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Draw points
+        graphData.forEach(point => {
+
+            let x = left +
+                (point.time / duration) * graphWidth;
+
+            let y = top + graphHeight -
+                (point[dataKey] / highest) * graphHeight;
+
+            ctx.beginPath();
+
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+
+            ctx.fillStyle = color;
+            ctx.fill();
+
+        });
+
+    }
+
+    // Draw time axis
+    ctx.fillStyle = getComputedStyle(document.body)
+        .getPropertyValue("--muted").trim();
+
+    ctx.textAlign = "center";
+
+    for (let i = 0; i <= 4; i++) {
+
+        let x = left + graphWidth * i / 4;
+
+        let time = Math.round(duration * i / 4);
+
+        let label = time < 60
+            ? time + "s"
+            : Math.floor(time / 60) + "m";
+
+        ctx.fillText(
+            label,
+            x,
+            height - 8
+        );
+
+    }
+
+    ctx.textAlign = "left";
+
+}
+
+
+/* =================================
+   10. UPDATE BOTH GRAPHS
+================================= */
+
+function drawGraphs() {
+
+    drawGraph(
+        "wpmGraph",
+        "wpm",
+        "#60a5fa",
+        0,
+        ""
+    );
+
+    drawGraph(
+        "accuracyGraph",
+        "accuracy",
+        "#4ade80",
+        100,
+        "%"
+    );
+
+}
+
+
+/* =================================
+   11. SAVE AND DISPLAY BEST SCORE
+================================= */
+
+function updateBestScore() {
+
+    let history = getSavedHistory();
+
+    let best = 0;
+
+    history.forEach(test => {
+
+        if (test.wpm > best) {
+            best = test.wpm;
+        }
+
+    });
+
+    document.getElementById("bestWpm").textContent = best;
+
+}
+
+
+/* =================================
+   12. FINISH TEST
+================================= */
+
+function finishTest() {
+
+    if (testFinished) return;
+
+    if (!startTime) {
+
+        alert("Start typing before finishing the test!");
+
+        return;
+
+    }
+
+    testFinished = true;
+
+    clearInterval(timerInterval);
+
+    let stats = calculateStats();
+
+    let elapsed = Math.floor(
+        (Date.now() - startTime) / 1000
+    );
+
+    // Record final graph point
+    if (
+        graphData.length === 0 ||
+        graphData[graphData.length - 1].time !== elapsed
+    ) {
+
+        graphData.push({
+            time: elapsed,
+            wpm: stats.wpm,
+            accuracy: stats.accuracy
+        });
+
+    }
+
+    drawGraphs();
+
+    typing.disabled = true;
+
+    document.getElementById("timer").textContent =
+        formatTime(Math.max(0, duration - elapsed));
+
+    document.getElementById("timer-status").textContent =
+        "Test completed";
+
+    // Display final results
+    document.getElementById("finalWpm").textContent =
+        stats.wpm;
+
+    document.getElementById("finalAccuracy").textContent =
+        stats.accuracy + "%";
+
+    document.getElementById("finalErrors").textContent =
+        stats.errors;
+
+    document.getElementById("finalCharacters").textContent =
+        typing.value.length;
+
+    let difficulty = difficultySelect.value;
+
+    document.getElementById("finalDifficulty").textContent =
+        difficulty.toUpperCase();
+
+    let message = stats.wpm >= 60
+        ? "Excellent typing speed! Keep it up!"
+        : stats.wpm >= 35
+            ? "Good work! Keep practising!"
+            : "Keep practising to improve your speed!";
+
+    document.getElementById("performance").textContent =
+        message;
+
+    document.getElementById("result").style.display =
+        "block";
+
+    // Save result
+    let history = getSavedHistory();
+
+    let newResult = {
+        date: new Date().toLocaleString(),
+        wpm: stats.wpm,
+        accuracy: stats.accuracy,
+        errors: stats.errors,
+        characters: typing.value.length,
+        duration: duration,
+        difficulty: difficulty
+    };
+
+    history.unshift(newResult);
+
+    // Keep last ten tests
+    history = history.slice(0, 10);
+
+    saveHistory(history);
+
+    updateBestScore();
+
+    showLeaderboard();
+
+    showHistory();
+
+    // Bring result into view
+    document.getElementById("result").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+
+
+/* =================================
+   13. LEADERBOARD
+================================= */
+
+function showLeaderboard() {
+
+    let history = getSavedHistory();
+
+    let leaderboard = document.getElementById("leaderboard");
+
+    leaderboard.innerHTML = "";
+
+    if (history.length === 0) {
+
+        leaderboard.innerHTML =
+            '<tr><td colspan="5" class="empty-message">No tests completed yet.</td></tr>';
+
+        return;
+
+    }
+
+    // Sort by highest WPM
+    let sorted = [...history].sort(
+        (a, b) => b.wpm - a.wpm
+    );
+
+    sorted.slice(0, 5).forEach((test, index) => {
+
+        let row = document.createElement("tr");
+
+        let values = [
+            index + 1,
+            test.wpm,
+            test.accuracy + "%",
+            formatTime(test.duration),
+            test.difficulty.toUpperCase()
+        ];
+
+        values.forEach(value => {
+
+            let cell = document.createElement("td");
+
+            cell.textContent = value;
+
+            row.appendChild(cell);
+
+        });
+
+        leaderboard.appendChild(row);
+
+    });
+
+}
+
+
+/* =================================
+   14. PREVIOUS TEST HISTORY
+================================= */
+
+function showHistory() {
+
+    let history = getSavedHistory();
+
+    let historyTable = document.getElementById("history");
+
+    historyTable.innerHTML = "";
+
+    if (history.length === 0) {
+
+        historyTable.innerHTML =
+            '<tr><td colspan="5" class="empty-message">No previous tests available.</td></tr>';
+
+        return;
+
+    }
+
+    history.forEach(test => {
+
+        let row = document.createElement("tr");
+
+        let values = [
+            test.date,
+            test.wpm,
+            test.accuracy + "%",
+            formatTime(test.duration),
+            test.difficulty.toUpperCase()
+        ];
+
+        values.forEach(value => {
+
+            let cell = document.createElement("td");
+
+            cell.textContent = value;
+
+            row.appendChild(cell);
+
+        });
+
+        historyTable.appendChild(row);
+
+    });
+
+}
+
+
+/* =================================
+   15. CLEAR HISTORY
+================================= */
+
+function clearHistory() {
+
+    let confirmClear = confirm(
+        "Are you sure you want to delete all previous test results?"
+    );
+
+    if (confirmClear) {
+
+        localStorage.removeItem("typingHistory");
+
+        updateBestScore();
+
+        showLeaderboard();
+
+        showHistory();
+
+    }
+
+}
+
+
+/* =================================
+   16. DARK AND LIGHT MODE
+================================= */
+
+function toggleTheme() {
+
+    document.body.classList.toggle("light");
+
+    let isLight = document.body.classList.contains("light");
+
+    localStorage.setItem(
+        "typingTheme",
+        isLight ? "light" : "dark"
+    );
+
+    updateThemeButton();
+
+    drawGraphs();
+
+}
+
+
+function updateThemeButton() {
+
+    let isLight = document.body.classList.contains("light");
+
+    document.getElementById("themeButton").textContent =
+        isLight ? "🌙 Dark Mode" : "☀ Light Mode";
+
+}
+
+
+function loadTheme() {
+
+    let savedTheme = localStorage.getItem("typingTheme");
+
+    if (savedTheme === "light") {
+
+        document.body.classList.add("light");
+
+    }
+
+    updateThemeButton();
+
+}
+
+
+/* =================================
+   17. RESET TEST
+================================= */
+
+function resetTest() {
+
+    clearInterval(timerInterval);
+
+    duration = Number(durationSelect.value);
+
+    startTime = null;
+    timerInterval = null;
+
+    graphData = [];
+    lastGraphTime = 0;
+
+    testFinished = false;
+
+    typing.value = "";
+    typing.disabled = false;
+
+    createTarget();
+
+    document.getElementById("timer").textContent =
+        formatTime(duration);
+
+    document.getElementById("timer-status").textContent =
+        "Start typing to begin the timer";
+
+    document.getElementById("wpm").textContent = "0";
+
+    document.getElementById("accuracy").textContent = "100%";
+
+    document.getElementById("errors").textContent = "0";
+
+    document.getElementById("characters").textContent = "0";
+
+    document.getElementById("characterInfo").textContent =
+        "0 characters typed";
+
+    document.getElementById("progress").style.width = "0%";
+
+    document.getElementById("result").style.display = "none";
+
+    showPassage();
+
+    drawGraphs();
+
+}
+
+
+/* =================================
+   18. INITIAL SETUP
+================================= */
+
+window.addEventListener("resize", drawGraphs);
+
+loadTheme();
+
+updateBestScore();
+
+showLeaderboard();
+
+showHistory();
+
+resetTest();
+
+</script>
+
+</body>
+</html>
